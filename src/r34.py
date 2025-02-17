@@ -60,7 +60,7 @@ class r34Py:
             posts.append(Post.from_json(post_json))
         return posts
 
-    def random_post(self, tags: list = None):  # pyright: ignore[]
+    def random_post(self, tags: list = []):
         if tags != None:
             pass
 
