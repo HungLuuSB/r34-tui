@@ -47,9 +47,16 @@ def render_image_result(stdscr):
         header_window.getmaxyx()[0] - 1,
         header_window.getmaxyx()[1] - 2,
     )
+    body_window = curses.newwin(
+        MAX_HEIGHT - 1 - header_window.getmaxyx()[0],
+        MAX_WIDTH,
+        header_window.getmaxyx()[0] + 1,
+        0,
+    )
 
     stdscr.refresh()
     header_window.refresh()
+    body_window.refresh()
 
 
 def render_main_menu(stdscr):

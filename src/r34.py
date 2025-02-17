@@ -32,7 +32,10 @@ class r34Py:
         )
 
     def search(
-        self, tags: list[str] = [], page_id: int = None, limit: int = 1000
+        self,
+        tags: list[str] = [],
+        page_id: int = None,  # type: ignore
+        limit: int = 1000,  # type: ignore
     ) -> list[Post]:
         if limit < 0 or limit > 1000:
             limit = 1000
@@ -46,23 +49,26 @@ class r34Py:
         curl_command = ["curl", "-s", f"{formattedUrl}"]
         response = subprocess.check_output(curl_command, text=True)
 
-        # response = self._session.get(formattedUrl, headers=__headers__, timeout=30)
-        # print(formattedUrl)
-        # conn = http.client.HTTPSConnection(formattedUrl)
-        # conn.request("GET", "/")
-        # print(respones)
-        # if len(response.content) == 0:
-        #    return []
-
         posts = []
 
         for post_json in json.loads(response):
             posts.append(Post.from_json(post_json))
         return posts
 
-    def random_post(self, tags: list = []):
+    def random_post(self, tags: list = None):  # type: ignore ``
         if tags != None:
-            pass
+            search_raw = self.search(tags, None, 1000)  # type: ignore
+            if search_raw == []:
+                return []
+            random_num = random.randint(0, len(search_raw))
+
+            while len(search_raw) <= 0:
+                search_raw = self.search(tags, None, 1000)  # type: ignore
+            else:
+                return search_raw[random_num]
+
+        else:
+            return []
 
     def _parseUrl(self, url: str, param: list) -> str:
         retUrl = url
