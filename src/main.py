@@ -36,10 +36,11 @@ def check_textbox_entered(key):
     return key
 
 
-def render_image_result(stdscr):
+def render_image_result(stdscr, input_tags: str):
     MAX_HEIGHT, MAX_WIDTH = stdscr.getmaxyx()
     stdscr.clear()
-    header_window = curses.newwin(4, MAX_WIDTH, 0, 0)
+    # header section
+    header_window = curses.newwin(5, MAX_WIDTH, 0, 0)
     header_window_border = rectangle(
         header_window,
         0,
@@ -47,16 +48,40 @@ def render_image_result(stdscr):
         header_window.getmaxyx()[0] - 1,
         header_window.getmaxyx()[1] - 2,
     )
+    tags_searchbox_window = newwin(
+        3,
+        50,
+        1,
+        (header_window.getyx()[1] + header_window.getmaxyx()[1]) // 2 - 25,
+    )
+    tags_searchbox_border = rectangle(
+        tags_searchbox_window,
+        0,
+        0,
+        tags_searchbox_window.getmaxyx()[0] - 1,
+        tags_searchbox_window.getmaxyx()[1] - 2,
+    )
+    tags_searchbox_border_title = tags_searchbox_window.addstr(0, 1, "Tags")
+    tags_searchbox_textbox_window = newwin(
+        1, tags_searchbox_window.getmaxyx()[1] - 3, 1, 1
+    )
+    tags_searchbox_textbox = Textbox(tags_searchbox_textbox_window, insert_mode=True)
+    # body section
     body_window = curses.newwin(
-        MAX_HEIGHT - 1 - header_window.getmaxyx()[0],
+        MAX_HEIGHT - header_window.getmaxyx()[0],
         MAX_WIDTH,
-        header_window.getmaxyx()[0] + 1,
+        header_window.getmaxyx()[0] + 0,
         0,
     )
-
+    body_window_border = rectangle(
+        body_window, 0, 0, body_window.getmaxyx()[0] - 1, body_window.getmaxyx()[1] - 2
+    )
     stdscr.refresh()
     header_window.refresh()
+    tags_searchbox_window.refresh()
     body_window.refresh()
+    header_window.refresh()
+    # tags_searchbox_window.refresh()
 
 
 def render_main_menu(stdscr):
@@ -87,7 +112,7 @@ def render_main_menu(stdscr):
     main_window_searchbox_textbox_window.refresh()
     main_window_searchbox_textbox.edit(check_textbox_entered)
     tags_string = main_window_searchbox_textbox.gather()
-    render_image_result(stdscr)
+    render_image_result(stdscr, tags_string)
 
 
 def main(stdscr):
