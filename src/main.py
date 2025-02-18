@@ -1,18 +1,12 @@
 #!/usr/bin/env python3
 import curses
-from curses import COLOR_RED, newwin, reset_prog_mode, window, wrapper
+from curses import window, wrapper
 from curses.textpad import Textbox, rectangle
 import subprocess
 import __vars__
 import os
-
-import requests
 from post import Post
 from r34 import r34Py
-
-import sys
-
-import r34
 
 # Configs
 
@@ -54,10 +48,10 @@ def render_image_detail(stdscr, result_paginated_list, image_index):
     MAX_HEIGHT, MAX_WIDTH = stdscr.getmaxyx()
     stdscr.addstr(MAX_HEIGHT - 1, 1, "[r]: return")
     stdscr.refresh()
-    main_window = newwin(MAX_HEIGHT - 1, MAX_WIDTH * 7 // 10, 0, 0)
+    main_window = curses.newwin(MAX_HEIGHT - 1, MAX_WIDTH * 7 // 10, 0, 0)
     main_window.border(0, 0, 0, 0, 0, 0, 0, 0)
 
-    info_window = newwin(
+    info_window = curses.newwin(
         MAX_HEIGHT - 1, main_window.getmaxyx()[1] - 1, 0, main_window.getmaxyx()[1]
     )
     info_window.border(0, 0, 0, 0, 0, 0, 0, 0)
@@ -179,10 +173,9 @@ def paginate_list(obj_list: list, items_per_page: int):
     ]
 
 
-def render_image_result(stdscr, redirect=False):
+def render_image_result(stdscr):
     global input_tags, max_page, current_page
     tags_list = input_tags.split(" ")
-    tags_string = "+".join(tags_list)
     r34_client = r34Py()
     # Whole screen
     MAX_HEIGHT, MAX_WIDTH = stdscr.getmaxyx()
@@ -192,7 +185,7 @@ def render_image_result(stdscr, redirect=False):
     # header section
     header_window = curses.newwin(5, MAX_WIDTH, 0, 0)
     header_window.border(0, 0, 0, 0, 0, 0, 0, 0)
-    tags_searchbox_window = newwin(
+    tags_searchbox_window = curses.newwin(
         3,
         50,
         1,
@@ -200,8 +193,8 @@ def render_image_result(stdscr, redirect=False):
         # (header_window.getyx()[1] + header_window.getmaxyx()[1]) // 2 - 25,
     )
     tags_searchbox_window.border(0, 0, 0, 0, 0, 0, 0, 0)
-    tags_searchbox_border_title = tags_searchbox_window.addstr(0, 1, "Tags")
-    tags_searchbox_textbox_window = newwin(
+    tags_searchbox_window.addstr(0, 1, "Tags")
+    tags_searchbox_textbox_window = curses.newwin(
         1,
         tags_searchbox_window.getmaxyx()[1] - 3,
         tags_searchbox_window.getbegyx()[0] + 1,
@@ -226,7 +219,7 @@ def render_image_result(stdscr, redirect=False):
     tags_searchbox_textbox_window.refresh()
     body_window.refresh()
     image_frame_holder_pad = curses.newpad(100, body_window.getmaxyx()[1] - 2)
-    result = r34_client.search(tags_list, None)
+    result = r34_client.search(tags_list, None)  # type: ignore
     result_paginated_list = paginate_list(result, (IMAGE_PER_ROW + 1) * 2)
     max_page = len(result_paginated_list) - 1
     # item = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
