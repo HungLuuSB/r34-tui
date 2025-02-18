@@ -316,24 +316,7 @@ def main(stdscr):
     curses.cbreak()
     curses.noecho()
     stdscr.clear()
-    # draw borders
     render_main_menu(stdscr)
-    # stdscr.addstr("Finished")
 
 
 wrapper(main)
-"""
-server_up = check_server_status()
-print("Connecting to server...")
-if not server_up:
-    print("Server is not online!")
-else:
-    print("Connected")
-    r34_client = r34Py()
-    result = r34_client.search(["gay", "ezreal"], None, 5)
-    print("Rendering")
-    for post in result:
-        os.system(
-            f"echo {post.thumbnail} | xargs curl -s | kitty +kitten icat --place 10x10@0x3 --scale-up --align"
-        )
-"""
